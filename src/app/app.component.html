@@ -1,136 +1,172 @@
 <div class="container">
+  <div class="jumbotron text-center">
+    <h1 class="display-3">{{ title }}</h1>
+  </div>
   <div class="row" *ngIf="errorCallingRestEndpoint">
     <div class="col-md-12">
-      <h3>Quiz Editor D E A D . . . Try again later : - )</h3>
+      <h3>Hmm, something went wrong... Please try again later.</h3>
     </div>
   </div>
   <div class="row" *ngIf="!errorCallingRestEndpoint">
     <div class="col-md-4">
-      <br>
-      <button class="btn btn-outline-success" (click)="addNewQuiz()">Add New Quiz</button>
-      <button class="btn btn-link btn-sm" (click)="jsPromisesOne()">JS Promises 1</button>
-      <button class="btn btn-link btn-sm" (click)="jsPromisesTwo()">2</button>
-      <button class="btn btn-link btn-sm" (click)="jsPromisesThree()">3</button>
-      <br>
-      <br>
+      <br />
+      <button class="btn btn-outline-success" (click)="addNewQuiz()">
+        Add New Quiz
+      </button>
+      <br />
+      <br />
       <div class="list-group">
         <a
-          href="#" 
-          class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" 
+          href="#"
+          class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
           *ngFor="let q of quizzes"
           (click)="setSelectedQuiz(q)"
           [class.active]="selectedQuiz === q"
-          [style.text-decoration]="q.markedForDelete ? 'line-through' : 'inherit'"
+          [style.text-decoration]="
+            q.markedForDelete ? 'line-through' : 'inherit'
+          "
         >
-            {{ q.name }}
-            <small>
-                {{ q.questions.length }} questions
-            </small>
+          {{ q.name }} <small>{{ q.questions.length }} questions</small>
         </a>
       </div>
     </div>
-    <div class="col-md-8"
-         [@detailsFromLeft]="detailsAnimationState"
-         (@detailsFromLeft.done)="detailsFromLeftAnimationComplete()"
+    <div
+      class="col-md-8"
+      [@detailsFromLeft]="detailsAnimationState"
+      (@detailsFromLeft.done)="detailsFromLeftAnimationComplete()"
     >
       <div *ngIf="selectedQuiz">
-        <br>
+        <br />
         <div
-          [@pulseSaveCancelButtons]="numberOfAddedQuizzes + numberOfDeletedQuizzes + numberOfEditedQuizzes > 0 ? 'somethingToSave' : 'nothingToSave'"
+          [@pulseSaveCancelButtons]="
+            numberOfAddedQuizzes +
+              numberOfDeletedQuizzes +
+              numberOfEditedQuizzes >
+            0
+              ? 'somethingToSave'
+              : 'nothingToSave'
+          "
         >
           <button
             class="btn"
-            [class.btn-outline-dark]="numberOfAddedQuizzes + numberOfDeletedQuizzes + numberOfEditedQuizzes === 0"
-            [class.btn-dark]="numberOfAddedQuizzes + numberOfDeletedQuizzes + numberOfEditedQuizzes > 0">
+            [class.btn-outline-dark]="
+              numberOfAddedQuizzes +
+                numberOfDeletedQuizzes +
+                numberOfEditedQuizzes ===
+              0
+            "
+            [class.btn-dark]="
+              numberOfAddedQuizzes +
+                numberOfDeletedQuizzes +
+                numberOfEditedQuizzes >
+              0
+            "
+            (click)="saveBatchEdits()"
+          >
             Save Quizzes
-            <span 
-              *ngIf="numberOfAddedQuizzes > 0"
-              class="badge badge-success ml-2"
-            >
-            + {{ numberOfAddedQuizzes}}
-            </span>
-            <span 
+            <span
               *ngIf="numberOfDeletedQuizzes > 0"
               class="badge badge-danger ml-2"
             >
-            - {{ numberOfDeletedQuizzes}}
-            </span>          
-            <span 
+              - {{ numberOfDeletedQuizzes }}
+            </span>
+            <span
+              *ngIf="numberOfAddedQuizzes > 0"
+              class="badge badge-success ml-2"
+            >
+              + {{ numberOfAddedQuizzes }}
+            </span>
+            <span
               *ngIf="numberOfEditedQuizzes > 0"
               class="badge badge-light ml-2"
             >
-            * {{ numberOfEditedQuizzes}}
+              * {{ numberOfEditedQuizzes }}
             </span>
           </button>
-          <button class="btn btn-link">Cancel</button>
+          <button class="btn btn-link" (click)="cancelBatchEdits()">
+            Cancel
+          </button>
         </div>
-        
-        <br>
-        <br>
+        <br />
+        <br />
         <div class="card">
           <div class="card-header">General</div>
           <div class="card-body">
             <label>Name</label>
-            <input type="text" [(ngModel)]="selectedQuiz.name" class="form-control">
+            <input
+              type="text"
+              [(ngModel)]="selectedQuiz.name"
+              class="form-control"
+            />
           </div>
         </div>
-        <br>
+        <br />
         <div class="card">
           <div class="card-header">Questions</div>
           <div class="card-body">
-            <button 
-              class="btn btn-outline-success"
-              (click)="addNewQuestion()"
-            >
+            <button class="btn btn-outline-success" (click)="addNewQuestion()">
               Add New Question
             </button>
-            <br>
-            <br>
+            <br />
+            <br />
             <div class="row" *ngFor="let question of selectedQuiz.questions">
               <div class="col-md-9">
-                <input type="text" class="form-control" [(ngModel)]="question.name">
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="question.name"
+                />
               </div>
               <div class="col-md-3">
-                <button 
+                <button
                   class="btn btn-link text-danger"
                   (click)="removeQuestion(question)"
-                >Remove</button>
+                >
+                  Remove
+                </button>
               </div>
-              <br>
-              <br>
+              <br />
+              <br />
             </div>
           </div>
         </div>
-        <br>
+        <br />
         <div class="card">
-          <div class="card-header">Other</div>
+          <div class="card-header">
+            Other
+          </div>
           <div class="card-body">
             <div class="form-check">
               <label class="form-check-label text-danger">
-                  <input 
-                    type="checkbox" 
-                    class="form-check-input" 
-                    [(ngModel)]="selectedQuiz.markedForDelete"
-                  />
-                  Mark for Delete
-              </label>      
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  [(ngModel)]="selectedQuiz.markedForDelete"
+                />
+                Mark for Delete
+              </label>
             </div>
           </div>
-        </div>    
+        </div>
       </div>
       <div *ngIf="!selectedQuiz">
-        <br>
-        <br>
-        <br>
-        <br>
+        <br />
+        <br />
+        <br />
+        <br />
         <div class="card">
           <div class="card-header">&nbsp;</div>
           <div class="card-body">
-            <h5>Select or <button class="btn btn-outline-secondary" (click)="addNewQuiz()">Add a New Quiz</button> to get started...</h5>
+            <h5>
+              Select a quiz from list at left, or
+              <button class="btn btn-outline-secondary" (click)="addNewQuiz()">
+                Add a New Quiz
+              </button>
+              to get started...
+            </h5>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
